@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS budgeting_app;
 
 CREATE DATABASE budgeting_app;
 
-\c budgeting_app
+\c budgeting_app;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
