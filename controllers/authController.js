@@ -18,7 +18,6 @@ auth.post("/register", async (req, res) => {
       // Hash password
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
-  
       // Create user in the database
       const newUser = await createUser({
         passwordHash: hashedPassword,

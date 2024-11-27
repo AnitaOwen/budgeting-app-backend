@@ -1,9 +1,10 @@
 \c budgeting_app;
 
 INSERT INTO users (email, first_name, last_name, password_hash) VALUES
-('john.doe@example.com', 'John', 'Doe', 'hashedpassword1'),
-('jane.smith@example.com', 'Jane', 'Smith', 'hashedpassword2'),
-('sam.brown@example.com', 'Sam', 'Brown', 'hashedpassword3');
+('john.doe@example.com', 'John', 'Doe', '$2b$10$KcwToLoAoSNuXuwg0BrXaeqev92HlioOThHxluz4wmyxwUulFu.0K'),
+('jane.smith@example.com', 'Jane', 'Smith', '$2b$10$KcwToLoAoSNuXuwg0BrXaeqev92HlioOThHxluz4wmyxwUulFu.0K'),
+('sam.brown@example.com', 'Sam', 'Brown', '$2b$10$KcwToLoAoSNuXuwg0BrXaeqev92HlioOThHxluz4wmyxwUulFu.0K'),
+('demo@me.com', 'Demo', 'User', '$2b$10$KcwToLoAoSNuXuwg0BrXaeqev92HlioOThHxluz4wmyxwUulFu.0K'); 
 
 INSERT INTO transactions (user_id, transaction_type, amount, item_name, transaction_date) VALUES
 -- Transactions for John Doe
@@ -25,4 +26,11 @@ INSERT INTO transactions (user_id, transaction_type, amount, item_name, transact
 (3, 'expense', 800.00, 'Rent', '2024-11-03'),
 (3, 'expense', 200.00, 'Transportation', '2024-11-06'),
 (3, 'expense', 50.00, 'Coffee', '2024-11-07'),
-(3, 'income', 100.00, 'Gift', '2024-11-10');
+(3, 'income', 100.00, 'Gift', '2024-11-10'),
+
+-- Transactions for Demo User
+(4, 'income', 2000.00, 'Salary', '2024-11-01'), 
+(4, 'expense', 500.00, 'Rent', '2024-11-03'),
+(4, 'expense', 150.00, 'Groceries', '2024-11-05'),
+(4, 'income', 100.00, 'Freelance Work', '2024-11-10'),
+(4, 'expense', 75.00, 'Utilities', '2024-11-12');

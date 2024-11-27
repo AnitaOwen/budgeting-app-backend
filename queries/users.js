@@ -13,7 +13,7 @@ const findUserByEmail = async (email) => {
 
 const createUser = async ({passwordHash, email, first_name, last_name}) => {
     try {
-        const newUser = await db.one(`INSERT INTO users (passwordHash, email, first_name, last_name) VALUES ($1,$2,$3,$4) RETURNING id, email, first_name, last_name`)
+        const newUser = await db.one(`INSERT INTO users (password_hash, email, first_name, last_name) VALUES ($1,$2,$3,$4) RETURNING id, email, first_name, last_name`, [passwordHash, email, first_name, last_name])
         return newUser
     } catch (error){
         console.error("Error creating new user:", error);
