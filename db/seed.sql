@@ -1,11 +1,10 @@
 \c budgeting_app;
 
-INSERT INTO users (email, first_name, last_name, password_hash) VALUES
 INSERT INTO users (email, first_name, last_name, password_hash, verification_token, is_verified, created_at, updated_at) VALUES
 ('john.doe@example.com', 'John', 'Doe', '$2b$10$KcwToLoAoSNuXuwg0BrXaeqev92HlioOThHxluz4wmyxwUulFu.0K', NULL, FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('jane.smith@example.com', 'Jane', 'Smith', '$2b$10$KcwToLoAoSNuXuwg0BrXaeqev92HlioOThHxluz4wmyxwUulFu.0K', NULL, FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('sam.brown@example.com', 'Sam', 'Brown', '$2b$10$KcwToLoAoSNuXuwg0BrXaeqev92HlioOThHxluz4wmyxwUulFu.0K', NULL, FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('demo@me.com', 'Demo', 'User', '$2b$10$KcwToLoAoSNuXuwg0BrXaeqev92HlioOThHxluz4wmyxwUulFu.0K', NULL, FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);  
+('aveniia@gmail.com', 'Demo', 'User', '$2b$10$KcwToLoAoSNuXuwg0BrXaeqev92HlioOThHxluz4wmyxwUulFu.0K', NULL, FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);  
 
 INSERT INTO transactions (user_id, transaction_type, amount, item_name, transaction_date) VALUES
 -- Transactions for John Doe

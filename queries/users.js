@@ -20,5 +20,20 @@ const createUser = async ({passwordHash, email, first_name, last_name}) => {
         throw error;
     }
 }
+const updateUserVerification = async ({userId, isVerified}) => {
+  try {
+    const updatedUser = await db.one(
+      `UPDATE users 
+       SET is_verified = $1 
+       WHERE id = $2 
+       RETURNING id, email, first_name, last_name, is_verified`,
+      [isVerified, userId]
+    );
+    return updatedUser;
+  } catch(error) {
+    console.error("Error updating user verification status:", error);
+    throw error;
+  }
+}
 
-module.exports = { findUserByEmail, createUser }
+module.exports = { findUserByEmail, createUser, updateUserVerification }
