@@ -27,8 +27,6 @@ auth.post("/register", async (req, res) => {
       last_name,
       is_verified: false, 
     });
-  
-    // const token = generateToken(newUser);
 
     const verificationToken = generateToken(newUser, "email_verification");
 
@@ -37,7 +35,7 @@ auth.post("/register", async (req, res) => {
     if (verificationToken) {
       return res.status(201).json({
         message: "User registered successfully. Please verify your email.",
-        newUser,
+        user: newUser,
         verificationToken,
       });
     }
