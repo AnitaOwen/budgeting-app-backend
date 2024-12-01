@@ -20,19 +20,24 @@ const createUser = async ({passwordHash, email, first_name, last_name}) => {
       throw error;
   }
 }
-const updateUserVerification = async ({userId, isVerified}) => {
+const updateUserVerification = async ({id, is_verified}) => {
   try {
+    if (!id) {
+      throw new Error("User ID is required to update verification status.");
+    }
+
     const updatedUser = await db.one(
       `UPDATE users 
        SET is_verified = $1 
        WHERE id = $2 
        RETURNING id, email, first_name, last_name, is_verified`,
-      [isVerified, userId]
+      [is_verified, id]
     );
+
     return updatedUser;
   } catch(error) {
-    console.error("Error updating user verification status:", error);
-    throw error;
+    console.error(`Error updating verification status for user ${user_id}:`, error);
+    throw error; 
   }
 }
 

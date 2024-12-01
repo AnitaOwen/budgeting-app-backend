@@ -1,10 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { generateToken } = require("../utils/token");
 const { findUserByEmail, createUser, updateUserVerification } = require("../queries/users");
 const sendVerificationEmail = require("../utils/email")
-const generateToken = require("../utils")
 
 const auth = express.Router();
 
@@ -36,7 +36,7 @@ auth.post("/register", async (req, res) => {
   
     if (verificationToken) {
       return res.status(201).json({
-        message: "User registered successfully. Please verify your email.",
+        message: "Registration success! Please verify your email.",
         user: newUser,
         verificationToken,
       });
@@ -91,34 +91,30 @@ auth.post("/verify-email/:token", async (req, res) => {
     if (decoded.purpose !== "email_verification") {
       return res.status(400).json({ message: "Invalid token purpose" });
     }
-
     const user = await findUserByEmail(decoded.email);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Update user's verification status
-    const updatedUser = await updateUserVerification({ userId: user.id, isVerified: true });
+    const updatedUser = await updateUserVerification({ id: user.id, is_verified: true });
 
-    const accessToken = generateToken(updatedUser)
+    const newToken = generateToken(updatedUser)
 
     res.status(200).json({
-      message: "Email verified successfully",
+      message: "Email verified successfully! ",
       user: {
         id: updatedUser.id,
         email: updatedUser.email,
-        firstName: updatedUser.first_name,
-        lastName: updatedUser.last_name,
-        isVerified: updatedUser.is_verified,
+        first_name: updatedUser.first_name,
+        last_name: updatedUser.last_name,
+        is_verified: updatedUser.is_verified,
       },
       token: newToken
     });
-  } catch {
+  } catch(error) {
     console.error(error);
     res.status(400).json({ message: "Invalid or expired token" });
   }
-})
-
-
+});
 
 module.exports = auth;
