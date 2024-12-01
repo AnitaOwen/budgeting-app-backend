@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { generateToken } = require("../utils/token");
 const { findUserByEmail, createUser, updateUserVerification } = require("../queries/users");
 const sendVerificationEmail = require("../utils/email")
+const generateToken = require("../utils")
 
 const auth = express.Router();
 
@@ -81,28 +82,37 @@ auth.post("/login", async (req, res) => {
 });
 
 // verify email route
-auth.get("/verify-email", async (req, res) => {
+auth.post("/verify-email/:token", async (req, res) => {
 
-  const { token } = req.query;
+  const { token } = req.params;
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     if (decoded.purpose !== "email_verification") {
       return res.status(400).json({ message: "Invalid token purpose" });
     }
 
     const user = await findUserByEmail(decoded.email);
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     // Update user's verification status
-    await updateUserVerification({ userId: user.id, isVerified: true });
+    const updatedUser = await updateUserVerification({ userId: user.id, isVerified: true });
 
-    res.status(200).json({ message: "Email verified successfully" });
+    const accessToken = generateToken(updatedUser)
 
+    res.status(200).json({
+      message: "Email verified successfully",
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        firstName: updatedUser.first_name,
+        lastName: updatedUser.last_name,
+        isVerified: updatedUser.is_verified,
+      },
+      token: newToken
+    });
   } catch {
     console.error(error);
     res.status(400).json({ message: "Invalid or expired token" });
