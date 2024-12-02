@@ -1,5 +1,6 @@
-const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
+const sgMail = require('@sendgrid/mail');
+const { saveOtpForUser } = require("../queries/users")
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY); 
 
@@ -23,4 +24,34 @@ async function sendVerificationEmail(email, token) {
     }
 }
 
-module.exports = sendVerificationEmail
+const sendOtpEmail = async (email, id, otp) => {
+
+    console.log('User ID:', id);
+    // OTP expiration time (5 minutes from generation)
+    const expirationTime = new Date(Date.now() + 5 * 60 * 1000); 
+
+    const msg = {
+        to: email,
+        from: process.env.EMAIL_USER,
+        subject: 'Your One-Time Passcode (OTP)',
+        text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
+        html: `<p>Your OTP is <strong>${otp}</strong>. It will expire in 5 minutes.</p>`,
+    };
+
+    try {
+        if (!id) {
+            throw new Error("User ID is required to save OTP.");
+        }
+
+        const isSaved = await saveOtpForUser(id, otp, expirationTime); 
+        if(isSaved){
+            await sgMail.send(msg);
+            console.log(`OTP sent to ${email}`);
+        }
+    } catch (error) {
+        console.error('Error sending OTP email:', error);
+        throw new Error('Failed to send OTP email');
+    }
+}
+
+module.exports = { sendVerificationEmail, sendOtpEmail }

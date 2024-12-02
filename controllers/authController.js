@@ -3,8 +3,9 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { generateToken } = require("../utils/token");
-const { findUserByEmail, createUser, updateUserVerification } = require("../queries/users");
-const sendVerificationEmail = require("../utils/email")
+const { findUserByEmail, createUser, updateUserVerification, verifyOtp, saveOtpForUser } = require("../queries/users");
+const { sendVerificationEmail, sendOtpEmail } = require("../utils/email")
+const { generateOtp } = require("../utils/otp")
 
 const auth = express.Router();
 
@@ -12,7 +13,6 @@ const auth = express.Router();
 auth.post("/register", async (req, res) => {
   const { password, email, first_name, last_name } = req.body;
   try {
-    // Check if user already exists
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
       return res.status(409).json({ message: "There is already an account with this email" });
@@ -38,7 +38,7 @@ auth.post("/register", async (req, res) => {
       return res.status(201).json({
         message: "Registration success! Please verify your email.",
         user: newUser,
-        verificationToken,
+        token: verificationToken,
       });
     }
   } catch (error) {
@@ -51,26 +51,45 @@ auth.post("/register", async (req, res) => {
 
 // Login route
 auth.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, otp } = req.body;
   
   try {
-    const user = await findUserByEmail(email);
+    const foundUser = await findUserByEmail(email);
   
-    if (!user){
+    if (!foundUser){
       return res.status(401).json({ message: "Invalid credentials" });
     }
   
-    const validPassword = await bcrypt.compare(password, user.password_hash);
+    const validPassword = await bcrypt.compare(password, foundUser.password_hash);
   
     if (!validPassword){
       return res.status(401).json({ message: "Invalid credentials" });
     }
+
+    if (!foundUser.is_verified) {
+      return res.status(400).json({ message: "Email not verified. Please verify your email first." });
+    }
+
+    if(!otp){
+      const generatedOtp = generateOtp();
+      const expirationTime = new Date(Date.now() + 5 * 60 * 1000); 
+      await saveOtpForUser(foundUser.id, generatedOtp, expirationTime);
+      await sendOtpEmail(foundUser.email, foundUser.id, generatedOtp); 
+      return res.status(200).json({
+        message: "OTP sent to your email. Please check your inbox.",
+      });
+    }
+    
+    const isOtpValid = await verifyOtp(foundUser.id, otp);
+    if (!isOtpValid) {
+      return res.status(400).json({ message: "Invalid or expired OTP." });
+    }
      
-    const token = generateToken(user);
+    const token = generateToken(foundUser);
   
     res.status(200).json({
       message: "Logged in successfully",
-      user,
+      user: foundUser,
       token,
     });
   } catch (error) {

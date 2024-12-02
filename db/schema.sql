@@ -24,3 +24,12 @@ CREATE TABLE transactions (
     item_name VARCHAR(50) NOT NULL,
     transaction_date DATE NOT NULL
 );
+
+CREATE TABLE user_otps (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    otp VARCHAR(6) NOT NULL,
+    expiration_time TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
