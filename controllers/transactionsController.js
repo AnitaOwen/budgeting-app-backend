@@ -5,7 +5,6 @@ const transactions = express.Router()
 
 transactions.get("/:user_id", async (req, res) => {
     const { user_id } = req.params
-    console.log("user id tranactions params", user_id)
     try {
         const allTransactions = await getTransactionsByUserId(user_id);
         if(allTransactions.length > 0){
@@ -23,6 +22,7 @@ transactions.post("/", async (req, res) => {
     try {
         const newTransaction = await addNewTransaction({...req.body});
         if(newTransaction.id){
+            console.log("new transaction added")
             const allTransactions = await getTransactionsByUserId(newTransaction.user_id);
             res.status(200).json(allTransactions);
         } else {

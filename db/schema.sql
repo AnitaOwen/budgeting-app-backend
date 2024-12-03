@@ -21,7 +21,7 @@ CREATE TABLE transactions (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     transaction_type VARCHAR(20) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
-    item_name VARCHAR(50) NOT NULL,
+    category VARCHAR(50) NOT NULL,
     transaction_date DATE NOT NULL
 );
 
