@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const authController = require("./controllers/authController");
-const transactionsController = require("./controllers/transactionsController")
+const transactionsController = require("./controllers/transactionsController");
+// const authenticateToken = require("./middleware/authenticateToken");
 
 // CONFIGURATION
 const app = express();
@@ -10,6 +11,9 @@ const app = express();
 app.use(
     cors({
       origin: "http://localhost:3000",
+      // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+      // allowedHeaders: ["Content-Type", "Authorization"], 
+      // credentials: true,
     //   origin: ["", "http://localhost:3000"]
     })
 );

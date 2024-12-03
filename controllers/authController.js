@@ -102,7 +102,7 @@ auth.post("/login", async (req, res) => {
 
 // verify email route
 auth.post("/verify-email/:token", async (req, res) => {
-
+  
   const { token } = req.params;
 
   try {
