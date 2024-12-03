@@ -9,11 +9,9 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    password_hash TEXT NOT NULL,
-    verification_token VARCHAR(255) DEFAULT NULL, 
+    password_hash TEXT NOT NULL, 
     is_verified BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE transactions (

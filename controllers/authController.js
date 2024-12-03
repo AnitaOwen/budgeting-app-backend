@@ -3,9 +3,10 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { generateToken } = require("../utils/token");
-const { findUserByEmail, createUser, updateUserVerification, verifyOtp, saveOtpForUser, updateUserPassword } = require("../queries/users");
-const { sendVerificationEmail, sendOtpEmail } = require("../utils/email")
+const { findUserByEmail, createUser, updateUserVerification, verifyOtp, saveOtpForUser, updateUserPassword, findUserById } = require("../queries/users");
+const { sendVerificationEmail, sendOtpEmail, sendPasswordChangeEmail } = require("../utils/email")
 const { generateOtp } = require("../utils/otp")
+// const { authenticateToken } = require("../middleware/authenticateToken")
 
 const auth = express.Router();
 
@@ -17,11 +18,10 @@ auth.post("/register", async (req, res) => {
     if (existingUser) {
       return res.status(409).json({ message: "There is already an account with this email" });
     }
-  
-    // Hash password
+
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    // Create user in the database
+
     const newUser = await createUser({
       passwordHash: hashedPassword,
       email,
@@ -136,35 +136,46 @@ auth.post("/verify-email/:token", async (req, res) => {
   }
 });
 
-auth.put("/update-password", async (req, res) => {
-  const { id, email, newPassword, oldPassword } = req.body
+auth.put("/update-password/:id", async (req, res) => {
+  const { newPassword, currentPassword } = req.body;
+  const { id } = req.params;
+  console.log('PUT Request body:', req.body); 
+  console.log('PUT params ID:', id); 
+
+  if (!newPassword || !currentPassword) {
+    return res.status(400).json({ message: "Both current and new passwords are required." });
+  }
   try {
+
+    const foundUser = await findUserById(id);
+
+    if (!foundUser || !foundUser.password_hash) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    const isMatch = await bcrypt.compare(currentPassword, foundUser.password_hash);
+    console.log("current password isMatch", isMatch)
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect." });
+    }
 
     const saltRounds = 10;
     const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
-    const oldHashedPassword = await bcrypt.hash(oldPassword, saltRounds);
 
-    const foundUser = await findUserByEmail(email);
-    if(foundUser.password_hash && foundUser.email){
-      if(foundUser.password_hash === oldHashedPassword){
-        const updatedUser = await updateUserPassword(id,newHashedPassword);
+    const updatedUser = await updateUserPassword(foundUser.id, newHashedPassword);
 
-        if(updatedUser.id){
-          res.status(200).json({
-            message: "password updated successfully",
-            user: updatedUser,
-          });
-        }
-
-        
-      }
-    } 
+    if (updatedUser.id) {
+      console.log("Password updated successfully for user:", updatedUser);
+      await sendPasswordChangeEmail(updatedUser);
+      res.status(200).json({
+        message: "Password updated successfully",
+        user: updatedUser,
+      });
+    }
   } catch(error) {
     console.error(error);
     res.status(400).json({ message: "Failed to update password" });
   }
-
-
 
 })
 

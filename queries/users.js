@@ -11,6 +11,17 @@ const findUserByEmail = async (email) => {
   }
 };
 
+const findUserById = async (id) => {
+  try {
+    const user = await db.oneOrNone("SELECT * FROM users WHERE id = $1", id);
+
+    return user;
+  } catch (error) {
+    console.error("Error finding user by id:", error);
+    throw error;
+  }
+};
+
 const createUser = async ({passwordHash, email, first_name, last_name}) => {
   try {
     const newUser = await db.one(`INSERT INTO users (password_hash, email, first_name, last_name) VALUES ($1,$2,$3,$4) RETURNING id, email, first_name, last_name`, [passwordHash, email, first_name, last_name])
@@ -110,8 +121,10 @@ const verifyOtp = async (userId, otp) => {
 
 const updateUserPassword = async (id, newHashedPassword) => {
   try {
-    const updatedUser = await db.one(
-      "UPDATE user SET password_hash=$1 WHERE id=$2 RETURNING id",
+    console.log("Updating password for user ID:", id);
+    console.log("New hashed password:", newHashedPassword);
+    const updatedUser = await db.oneOrNone(
+      "UPDATE users SET password_hash=$1 WHERE id=$2 RETURNING *",
       [
         newHashedPassword,
         id,
@@ -124,4 +137,4 @@ const updateUserPassword = async (id, newHashedPassword) => {
   }
 }
 
-module.exports = { findUserByEmail, createUser, updateUserVerification, saveOtpForUser, findOtpByUserId, verifyOtp, updateUserPassword }
+module.exports = { findUserByEmail, createUser, updateUserVerification, saveOtpForUser, findOtpByUserId, verifyOtp, updateUserPassword, findUserById }

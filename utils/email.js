@@ -4,7 +4,7 @@ const { saveOtpForUser } = require("../queries/users")
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY); 
 
-async function sendVerificationEmail(email, token) {
+const sendVerificationEmail = async (email, token) => {
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${token}`;
 
     const msg = {
@@ -12,7 +12,7 @@ async function sendVerificationEmail(email, token) {
         from: process.env.EMAIL_USER,
         subject: 'Verify Your Email Address',
         text: `Please verify your email by clicking the following link: ${verificationUrl}`,
-        html: `<p>Please verify your email by clicking the following link: <a href="${verificationUrl}">${verificationUrl}</a></p>`,
+        html: `<p>Please verify your email by clicking the following link: <a href="${verificationUrl}">Verify Email</a></p>`,
     };
 
     try {
@@ -26,7 +26,7 @@ async function sendVerificationEmail(email, token) {
 
 const sendOtpEmail = async (email, id, otp) => {
 
-    console.log('User ID:', id);
+    // console.log('User ID:', id);
     // OTP expiration time (5 minutes from generation)
     const expirationTime = new Date(Date.now() + 5 * 60 * 1000); 
 
@@ -54,4 +54,22 @@ const sendOtpEmail = async (email, id, otp) => {
     }
 }
 
-module.exports = { sendVerificationEmail, sendOtpEmail }
+const sendPasswordChangeEmail = async (user) => {
+
+    const msg = {
+        to: user.email,
+        from: process.env.EMAIL_USER,
+        subject: 'Password Changed Successfully', 
+        text: `Dear ${user.first_name},\n\nYour password was successfully changed. If you did not request this change, please contact support immediately.`
+    };
+
+    try {
+        await sgMail.send(msg);
+        console.log(`Password change notification email was sent successfully to ${user.email}`);
+    } catch (error) {
+        console.error("Error sending email:", error);
+        throw new Error(`Failed to send password change email to ${user.email}`);
+    }
+}
+
+module.exports = { sendVerificationEmail, sendOtpEmail, sendPasswordChangeEmail }
