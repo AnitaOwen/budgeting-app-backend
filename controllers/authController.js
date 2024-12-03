@@ -3,7 +3,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { generateToken } = require("../utils/token");
-const { findUserByEmail, createUser, updateUserVerification, verifyOtp, saveOtpForUser } = require("../queries/users");
+const { findUserByEmail, createUser, updateUserVerification, verifyOtp, saveOtpForUser, updateUserPassword } = require("../queries/users");
 const { sendVerificationEmail, sendOtpEmail } = require("../utils/email")
 const { generateOtp } = require("../utils/otp")
 
@@ -102,7 +102,7 @@ auth.post("/login", async (req, res) => {
 
 // verify email route
 auth.post("/verify-email/:token", async (req, res) => {
-  
+
   const { token } = req.params;
 
   try {
@@ -135,5 +135,37 @@ auth.post("/verify-email/:token", async (req, res) => {
     res.status(400).json({ message: "Invalid or expired token" });
   }
 });
+
+auth.put("/update-password", async (req, res) => {
+  const { id, email, newPassword, oldPassword } = req.body
+  try {
+
+    const saltRounds = 10;
+    const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    const oldHashedPassword = await bcrypt.hash(oldPassword, saltRounds);
+
+    const foundUser = await findUserByEmail(email);
+    if(foundUser.password_hash && foundUser.email){
+      if(foundUser.password_hash === oldHashedPassword){
+        const updatedUser = await updateUserPassword(id,newHashedPassword);
+
+        if(updatedUser.id){
+          res.status(200).json({
+            message: "password updated successfully",
+            user: updatedUser,
+          });
+        }
+
+        
+      }
+    } 
+  } catch(error) {
+    console.error(error);
+    res.status(400).json({ message: "Failed to update password" });
+  }
+
+
+
+})
 
 module.exports = auth;

@@ -70,14 +70,14 @@ const findOtpByUserId = async (userId) => {
 };
 
 // Delete expired OTPs (for cleanup)
-const deleteExpiredOtps = async () => {
-  try {
-    await db.none("DELETE FROM user_otps WHERE expiration_time < NOW()");
-  } catch (error) {
-    console.error("Error deleting expired OTPs:", error);
-    throw error;
-  }
-};
+// const deleteExpiredOtps = async () => {
+//   try {
+//     await db.none("DELETE FROM user_otps WHERE expiration_time < NOW()");
+//   } catch (error) {
+//     console.error("Error deleting expired OTPs:", error);
+//     throw error;
+//   }
+// };
 
 const verifyOtp = async (userId, otp) => {
   try {
@@ -108,4 +108,20 @@ const verifyOtp = async (userId, otp) => {
   }
 };
 
-module.exports = { findUserByEmail, createUser, updateUserVerification, saveOtpForUser, findOtpByUserId, deleteExpiredOtps, verifyOtp }
+const updateUserPassword = async (id, newHashedPassword) => {
+  try {
+    const updatedUser = await db.one(
+      "UPDATE user SET password_hash=$1 WHERE id=$2 RETURNING id",
+      [
+        newHashedPassword,
+        id,
+      ]
+    );
+    return updatedUser
+  } catch(error) {
+    console.error("Error updating password:", error);
+    throw new Error("An error occurred updating password.");
+  }
+}
+
+module.exports = { findUserByEmail, createUser, updateUserVerification, saveOtpForUser, findOtpByUserId, verifyOtp, updateUserPassword }
