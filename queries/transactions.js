@@ -24,11 +24,10 @@ const addNewTransaction = async (transaction) => {
     }
 };
 
-const deleteTransaction = async (transaction) => {
+const deleteTransaction = async (transaction_id) => {
     try {
-        const { id } = transaction
 
-        const deletedTransaction = await db.one(`DELETE FROM transactions WHERE id = $1 RETURNING *`, id)
+        const deletedTransaction = await db.one(`DELETE FROM transactions WHERE id=$1 RETURNING *`, transaction_id)
 
         return deletedTransaction
     } catch(error){
@@ -37,6 +36,18 @@ const deleteTransaction = async (transaction) => {
     }
 };
 
+const updateTransaction = async (transaction) => {
+    const { transaction_type, amount, category, transaction_date, id } = transaction;
+    try {
+
+        const updatedTransaction = await db.one(`UPDATE transactions SET transaction_type=$1, amount=$2, category=$3, transaction_date=$4 WHERE id=$5 RETURNING *`, [transaction_type, amount, category, transaction_date, id])
+        return updatedTransaction
+    } catch(error) {
+        console.error('Error updating transaction:', error);
+        throw error;
+    }
+};
 
 
-module.exports = { getTransactionsByUserId, addNewTransaction, deleteTransaction }
+
+module.exports = { getTransactionsByUserId, addNewTransaction, deleteTransaction, updateTransaction }
