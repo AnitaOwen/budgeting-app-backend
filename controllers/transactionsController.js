@@ -7,9 +7,6 @@ transactions.get("/:user_id", async (req, res) => {
     const { user_id } = req.params
     try {
         const allTransactions = await getTransactionsByUserId(user_id);
-        if (!allTransactions.length) {
-            throw new Error("No transactions found for this user.");
-        }
         res.status(200).json(allTransactions);
     } catch (error) { 
         console.error("Error in transactions.get:", error);
