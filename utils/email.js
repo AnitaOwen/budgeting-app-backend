@@ -26,7 +26,6 @@ const sendVerificationEmail = async (email, token) => {
 
 const sendOtpEmail = async (email, id, otp) => {
 
-    // console.log('User ID:', id);
     // OTP expiration time (5 minutes from generation)
     const expirationTime = new Date(Date.now() + 5 * 60 * 1000); 
 
