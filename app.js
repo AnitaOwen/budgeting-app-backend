@@ -10,7 +10,7 @@ const app = express();
 // MIDDLEWARE
 app.use(
     cors({
-      origin: ["https://budgeting-app-backend-bgr1.onrender.com", "http://localhost:3000"]
+      origin: ["https://clinquant-rolypoly-ea3737.netlify.app", "http://localhost:3000"]
       // origin: "http://localhost:3000",
       // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
       // allowedHeaders: ["Content-Type", "Authorization"], 
