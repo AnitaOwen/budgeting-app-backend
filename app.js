@@ -10,14 +10,15 @@ const app = express();
 // MIDDLEWARE
 app.use(
     cors({
-      origin: ["https://clinquant-rolypoly-ea3737.netlify.app", "http://localhost:3000"]
+      origin: ["https://clinquant-rolypoly-ea3737.netlify.app", "http://localhost:3000"],
       // origin: "http://localhost:3000",
-      // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
-      // allowedHeaders: ["Content-Type", "Authorization"], 
-      // credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+      allowedHeaders: ["Content-Type", "Authorization"], 
+      credentials: true,
     //   origin: ["", "http://localhost:3000"]
     })
 );
+app.options('*', cors());
 
 app.use(express.json());
 
