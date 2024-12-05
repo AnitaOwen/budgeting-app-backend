@@ -10,7 +10,8 @@ const app = express();
 // MIDDLEWARE
 app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: ["https://budgeting-app-backend-bgr1.onrender.com", "http://localhost:3000"]
+      // origin: "http://localhost:3000",
       // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
       // allowedHeaders: ["Content-Type", "Authorization"], 
       // credentials: true,

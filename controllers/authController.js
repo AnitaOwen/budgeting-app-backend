@@ -49,6 +49,24 @@ auth.post("/register", async (req, res) => {
   }
 });
 
+auth.post("/login/demo-user", async (req, res) => {
+  const email = "aveniia@gmail.com"
+  try {
+    const foundUser = await findUserByEmail(email);
+    const token = generateToken(foundUser);
+    res.status(200).json({
+      message: "Logged in successfully",
+      user: foundUser,
+      token,
+    });
+  } catch(error){
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "An error occurred during the login process." });
+  }
+})
+
 // Login route
 auth.post("/login", async (req, res) => {
   const { email, password, otp } = req.body;
