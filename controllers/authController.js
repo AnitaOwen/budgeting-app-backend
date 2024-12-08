@@ -6,7 +6,6 @@ const { generateToken } = require("../utils/token");
 const { findUserByEmail, createUser, updateUserVerification, verifyOtp, saveOtpForUser, updateUserPassword, findUserById } = require("../queries/users");
 const { sendVerificationEmail, sendOtpEmail, sendPasswordChangeEmail } = require("../utils/email")
 const { generateOtp } = require("../utils/otp")
-// const { authenticateToken } = require("../middleware/authenticateToken")
 
 const auth = express.Router();
 
