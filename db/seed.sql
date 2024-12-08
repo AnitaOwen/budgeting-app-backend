@@ -78,4 +78,4 @@ INSERT INTO transactions (user_id, transaction_type, amount, category, transacti
 (4, 'expense', 110.00, 'Food & Dining', '2024-12-04'),
 (4, 'expense', 75.00, 'Health & Wellness', '2024-12-07'),
 (4, 'expense', 84.00, 'Transportation', '2024-12-06'),
-(4, 'expense', 30.00, 'Food & Dining', '2024-12-09'); 
+(4, 'expense', 30.00, 'Food & Dining', '2024-12-08'); 
