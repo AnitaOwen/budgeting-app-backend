@@ -15,7 +15,7 @@ auth.post("/register", async (req, res) => {
   try {
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
-      return res.status(409).json({ message: "There is already an account with this email" });
+      throw new Error("There is already an account with this email")
     }
 
     const saltRounds = 10;

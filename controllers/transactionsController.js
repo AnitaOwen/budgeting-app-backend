@@ -1,5 +1,7 @@
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const express = require("express");
 const { getTransactionsByUserId, addNewTransaction, deleteTransaction, updateTransaction } = require("../queries/transactions")
+const { generateInsights } = require("../utils/generateInsights")
 
 const transactions = express.Router()
 
@@ -63,5 +65,19 @@ transactions.put("/", async (req, res) => {
         res.status(500).json({ error: `An error occurred: ${error.message}` });
     }
 });
+
+transactions.post("/:user_id", async (req, res) => {
+    const { user_id } = req.params
+
+    try {
+        const allTransactions = await getTransactionsByUserId(user_id);
+        const insights = await generateInsights(allTransactions);
+        res.status(200).json(insights)
+        
+    } catch (error) { 
+        console.error("Error getting insights", error);
+        res.status(500).json({ error: `An error occurred: ${error.message}`});
+    }
+})
 
 module.exports = transactions;
