@@ -9,7 +9,17 @@ const generateInsights = async (transactions) => {
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `You are a friendly financial assistant AI for a budgeting app. Your goal is to analyze a user's transaction data and provide actionable insights and personalized suggestions in an encouraging and empathetic tone. Give real examples using the data provided to give caculated actionable examples of how the user can improve their budget or specific steps they can take regarding ways or areas where they can invest. Be relatable and keep the advice uplifting. Return the results as an array of strings in JSON string format, where each string is either an insight or a suggestion. Return the array only. Separate each sentence of an insight with a line break. No other words are wanted before or after the valid json.
+    const prompt = `
+    You are a friendly and empathetic financial assistant for a budgeting app. Your task is to analyze the provided user transaction data and deliver actionable insights and personalized suggestions. 
+
+    - Include calculated examples and offer real examples based on the data to show specific ways the user can improve their budget. Consider current general market trends.
+    - Highlight both positive trends and areas for improvement in a balanced, encouraging tone.
+    - Based on the budget and disposable income, suggest a percentage or amount that the user could set aside monthly for investments.
+    - Avoid generic advice; focus on deeper, meaningful insights that directly address the user's data.
+    - Provide suggestions that are uplifting, relatable, and practical, and encourage the user to add more transactions to unlock further insights.
+
+    Output the results as a JSON string containing an array of insights and suggestions. Each element in the array should be a string, where each sentence of an insight or suggestion is separated by a line break. Return only the JSON array, with no additional text before or after it.
+
     User's Transaction Data: ${JSON.stringify(transactions)}
     `;
 
