@@ -1,12 +1,15 @@
 const db = require("../db/dbConfig");
 
 const getTransactionsByUserId = async (user_id) => {
+    if (!user_id) {
+        throw new Error("Invalid id provided");
+    }
+
     try {
         const allTransactions = await db.any(`SELECT * FROM transactions WHERE user_id = $1 ORDER BY transaction_date DESC`, user_id)
 
         return allTransactions
     } catch(error){
-        console.error(`Error retrieving transactions for user_id ${user_id}:`, error);
         throw new Error("Error retreiving transactions");
     }
 };
@@ -19,7 +22,6 @@ const addNewTransaction = async (transaction) => {
 
         return newTransaction
     } catch(error){
-        console.error("Error adding new transaction", error)
         throw new Error("Failed to add a new transaction");
     }
 };

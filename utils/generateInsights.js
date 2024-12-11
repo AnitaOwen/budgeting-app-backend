@@ -17,6 +17,7 @@ const generateInsights = async (transactions) => {
     - Based on the budget and disposable income, suggest a percentage or amount that the user could set aside monthly for investments.
     - Avoid generic advice; focus on deeper, meaningful insights that directly address the user's data.
     - Provide suggestions that are uplifting, relatable, and practical, and encourage the user to add more transactions to unlock further insights.
+    - Give me at least 10 strings.
 
     Output the results as a JSON string containing an array of insights and suggestions. Each element in the array should be a string, where each sentence of an insight or suggestion is separated by a line break. Return only the JSON array, with no additional text before or after it.
 
