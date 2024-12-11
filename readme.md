@@ -14,8 +14,6 @@
 
 To set up and run the **Budgeting App** on your local machine, follow these steps:
 
-### Backend Setup
-
 1. **Clone the Backend Repository**: Fork and clone the backend repository to your local machine.
 
     ```bash
@@ -29,19 +27,36 @@ To set up and run the **Budgeting App** on your local machine, follow these step
     npm install
     ```
 
-3. **Seed the Database**: Initialize and seed the database to populate it with initial data.
+3. **Install PostgreSQL**: 
+   Make sure PostgreSQL is installed on your machine. You can download and install it from [PostgreSQL Official Website](https://www.postgresql.org/download/).
 
+4. **Create a Database**:
+   Open your terminal or PostgreSQL shell and run the following command to create a new database:
     ```bash
-    npm run db:init
-    npm run db:seed
+    CREATE DATABASE budgeting_app;
     ```
-
-4. **Run the Backend Server**: Start the backend server to handle API requests.
-
+5. **Create a .env File**: In the root of the project, create a .env file and add your database credentials like so:
+    ```
+    PG_HOST=localhost
+    PG_PORT=5432
+    PG_DATABASE=budgeting_app
+    PG_USER=your_username
+    PG_PASSWORD=your_password
+    ```
+6. **Install Dependencies**: If you haven’t already, install the required project dependencies:
+    ```bash
+    npm install
+    ```
+7. **Seed the Database**: You need to initialize and seed the database with sample data. Run the following commands:
+    ```bash
+    npm run db:init   # Initializes the database structure
+    npm run db:seed   # Seeds the database with initial data
+    ```
+8. **Run the Backend Server**: Start the backend server to interact with the database and the API:
     ```bash
     npm run dev
     ```
-    
+
 ## Authentication
 
 Authentication is required for users to access the API endpoints, particularly when interacting with sensitive resources such as transactions. The API uses JSON Web Tokens (JWT) for authentication, which helps verify the identity of the user making requests.
