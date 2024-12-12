@@ -18,6 +18,10 @@ const addNewTransaction = async (transaction) => {
     try {
         const { user_id, transaction_type, amount, category, transaction_date } = transaction
 
+        if(!user_id || !transaction_type || !amount || !category || !transaction_date ){
+            throw new Error("Missing required fields");
+        }
+
         const newTransaction = await db.one(`INSERT INTO transactions (user_id, transaction_type, amount, category, transaction_date ) VALUES($1, $2, $3, $4, $5) RETURNING *`, [user_id, transaction_type, amount, category, transaction_date ])
 
         return newTransaction
@@ -27,14 +31,15 @@ const addNewTransaction = async (transaction) => {
 };
 
 const deleteTransaction = async (transaction_id) => {
+    if (!transaction_id) {
+        throw new Error("Missing transaction id");
+    }
+
     try {
-
         const deletedTransaction = await db.one(`DELETE FROM transactions WHERE id=$1 RETURNING *`, transaction_id)
-
         return deletedTransaction
     } catch(error){
-        console.error("Error deleting transaction:", error);
-        throw new Error("Failed to delete the transaction.");
+        throw new Error("Failed to delete the transaction");
     }
 };
 
