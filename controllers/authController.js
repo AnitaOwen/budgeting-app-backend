@@ -89,8 +89,9 @@ auth.post("/login", async (req, res) => {
 
     if(!otp){
       const generatedOtp = generateOtp();
+      const hashedGeneratedOTP = await bcrypt.hash(generatedOtp, 10);
       const expirationTime = new Date(Date.now() + 5 * 60 * 1000); 
-      await saveOtpForUser(foundUser.id, generatedOtp, expirationTime);
+      await saveOtpForUser(foundUser.id, hashedGeneratedOTP, expirationTime);
       await sendOtpEmail(foundUser.email, foundUser.id, generatedOtp); 
       return res.status(200).json({
         message: "OTP sent to your email. Please check your inbox.",

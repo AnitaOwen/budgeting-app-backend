@@ -26,7 +26,7 @@ CREATE TABLE transactions (
 CREATE TABLE user_otps (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
-    otp VARCHAR(6) NOT NULL,
+    otp TEXT NOT NULL,
     expiration_time TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

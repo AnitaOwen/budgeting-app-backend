@@ -1,4 +1,5 @@
 const db = require("../db/dbConfig");
+const bcrypt = require("bcrypt");
 
 const findUserByEmail = async (email) => {
   try {
@@ -54,11 +55,12 @@ const updateUserVerification = async ({id, is_verified}) => {
 
 const saveOtpForUser = async (userId, otp, expirationTime) => {
   try {
+    const hashedOTP = await bcrypt.hash(otp, 10);
     const otpRecord = await db.one(
       `INSERT INTO user_otps (user_id, otp, expiration_time) 
       VALUES ($1, $2, $3) 
       RETURNING user_id, otp, expiration_time`,
-      [userId, otp, expirationTime]
+      [userId, hashedOTP, expirationTime]
     );
     return otpRecord;
   } catch (error) {
@@ -80,16 +82,6 @@ const findOtpByUserId = async (userId) => {
   }
 };
 
-// Delete expired OTPs (for cleanup)
-// const deleteExpiredOtps = async () => {
-//   try {
-//     await db.none("DELETE FROM user_otps WHERE expiration_time < NOW()");
-//   } catch (error) {
-//     console.error("Error deleting expired OTPs:", error);
-//     throw error;
-//   }
-// };
-
 const verifyOtp = async (userId, otp) => {
   try {
     const otpRecord = await db.oneOrNone(
@@ -108,10 +100,17 @@ const verifyOtp = async (userId, otp) => {
       return false;
     }
 
-    if (otpRecord.otp !== otp) {
+    const isMatch = await bcrypt.compare(otp, otpRecord.otp);
+    if (!isMatch) {
       console.log(`Incorrect OTP entered for user ${userId}`);
       return false;
     }
+
+    await db.none(
+      "DELETE FROM user_otps WHERE user_id = $1 AND otp = $2",
+      [userId, otpRecord.otp]
+    );
+
     return true;
   } catch(error) {
     console.error("Error verifying OTP:", error);
