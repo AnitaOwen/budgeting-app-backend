@@ -14,7 +14,7 @@ auth.post("/register", async (req, res) => {
   const { password, email, first_name, last_name } = req.body;
   try {
     const existingUser = await findUserByEmail(email);
-    if (existingUser) {
+    if (existingUser !== null) {
       throw new Error("There is already an account with this email")
     }
 
@@ -90,7 +90,7 @@ auth.post("/login", async (req, res) => {
     if(!otp){
       const generatedOtp = generateOtp();
       const expirationTime = new Date(Date.now() + 5 * 60 * 1000); 
-      await saveOtpForUser(foundUser.id, generatedOTP, expirationTime);
+      await saveOtpForUser(foundUser.id, generatedOtp, expirationTime);
       await sendOtpEmail(foundUser.email, foundUser.id, generatedOtp); 
       return res.status(200).json({
         message: "OTP sent to your email. Please check your inbox.",
