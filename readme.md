@@ -43,16 +43,28 @@ To set up and run the **Budgeting App** on your local machine, follow these step
     PG_USER=your_username
     PG_PASSWORD=your_password
     ```
-6. **Install Dependencies**: If you haven’t already, install the required project dependencies:
+
+6. **Add API Keys to .env File**: 
+- Get your SendGrid API key here: [SendGrid API Getting Started](https://www.twilio.com/docs/sendgrid/for-developers/sending-email/api-getting-started). 
+- Get your Gemini AI API key here: [Gemini API Key](https://ai.google.dev/gemini-api/docs/api-key).  
+- Add email credentials and API keys to .env, ensuring the variable names remain unchanged: 
+```
+SENDGRID_API_KEY=<insert your Sendgrid API key here>
+EMAIL_USER=<insert your email address here>
+EMAIL_PASS=<insert your email app password here>
+API_KEY=<insert Gemini API key here>
+FRONTEND_URL=http://localhost:3000
+```
+7. **Install Dependencies**: If you haven’t already, install the required project dependencies:
     ```bash
     npm install
     ```
-7. **Seed the Database**: You need to initialize and seed the database with sample data. Run the following commands:
+8. **Seed the Database**: You need to initialize and seed the database with sample data. Run the following commands:
     ```bash
     npm run db:init   # Initializes the database structure
     npm run db:seed   # Seeds the database with initial data
     ```
-8. **Run the Backend Server**: Start the backend server to interact with the database and the API:
+9. **Run the Backend Server**: Start the backend server to interact with the database and the API:
     ```bash
     npm run dev
     ```
