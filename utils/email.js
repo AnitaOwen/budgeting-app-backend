@@ -70,5 +70,26 @@ const sendPasswordChangeEmail = async (user) => {
         throw new Error(`Failed to send password change email to ${user.email}`);
     }
 }
+const sendTempPasswordEmail = async (email, temporaryPass) => {
+    const msg = {
+      to: email,
+      from: process.env.EMAIL_USER,
+      subject: "Your Temporary Password",
+      text: `Your temporary password is: ${temporaryPass}\n\nPlease log in and change your password immediately.`,
+      html: `
+        <p>Your temporary password is: <strong>${temporaryPass}</strong></p>
+        <p>Please log in and change your password immediately.</p>
+        <p>If you didn't request this, please contact support.</p>
+      `,
+    };
+  
+    try {
+      await sgMail.send(msg);
+      console.log(`Temporary password email sent to ${email}`);
+    } catch (error) {
+      console.error("Error sending temp password email:", error);
+      throw new Error("Failed to send temp password email.");
+    }
+  };
 
-module.exports = { sendVerificationEmail, sendOtpEmail, sendPasswordChangeEmail }
+module.exports = { sendVerificationEmail, sendOtpEmail, sendPasswordChangeEmail, sendTempPasswordEmail }

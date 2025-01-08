@@ -121,7 +121,7 @@ const verifyOtp = async (userId, otp) => {
 const updateUserPassword = async (id, newHashedPassword) => {
   try {
     console.log("Updating password for user ID:", id);
-    console.log("New hashed password:", newHashedPassword);
+    // console.log("New hashed password:", newHashedPassword);
     const updatedUser = await db.oneOrNone(
       "UPDATE users SET password_hash=$1 WHERE id=$2 RETURNING *",
       [

@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { generateToken } = require("../utils/token");
 const { findUserByEmail, createUser, updateUserVerification, verifyOtp, saveOtpForUser, updateUserPassword, findUserById } = require("../queries/users");
-const { sendVerificationEmail, sendOtpEmail, sendPasswordChangeEmail } = require("../utils/email")
+const { sendVerificationEmail, sendOtpEmail, sendPasswordChangeEmail, sendTempPasswordEmail } = require("../utils/email")
 const { generateOtp } = require("../utils/otp")
 
 const auth = express.Router();
@@ -15,7 +15,7 @@ auth.post("/register", async (req, res) => {
   try {
     const existingUser = await findUserByEmail(email);
     if (existingUser !== null) {
-      throw new Error("There is already an account with this email")
+      return res.status(401).json({ message: "There is already an account with this email" });
     }
 
     const saltRounds = 10;
@@ -156,8 +156,8 @@ auth.post("/verify-email/:token", async (req, res) => {
 auth.put("/update-password/:id", async (req, res) => {
   const { newPassword, currentPassword } = req.body;
   const { id } = req.params;
-  console.log('PUT Request body:', req.body); 
-  console.log('PUT params ID:', id); 
+  // console.log('PUT Request body:', req.body); 
+  // console.log('PUT params ID:', id); 
 
   if (!newPassword || !currentPassword) {
     return res.status(400).json({ message: "Both current and new passwords are required." });
@@ -194,6 +194,38 @@ auth.put("/update-password/:id", async (req, res) => {
     res.status(400).json({ message: "Failed to update password" });
   }
 
+})
+
+auth.put("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const foundUser = await findUserByEmail(email);
+    console.log(foundUser)
+
+    if (!foundUser){
+      return res.status(401).json({ message: `No account found for the email ${email}` });
+    }
+    
+    const temporaryPass = Math.random().toString(36).slice(-8);
+    const saltRounds = 10;
+    const newHashedPassword = await bcrypt.hash(temporaryPass, saltRounds);
+
+    const updatedUser = await updateUserPassword(foundUser.id, newHashedPassword);
+
+    if (!updatedUser) {
+
+      return res.status(500).json({ message: "Password update failed. Please try again." });
+    }
+
+    await sendTempPasswordEmail(updatedUser.email, temporaryPass);
+
+    res.status(200).json({
+      message: `A temporary password has been sent to ${email}. Please use it to log in and change your password.`
+    });
+  } catch(error){
+    console.error("Error in forgot-password:", error.message);
+    res.status(500).json({ message: "Failed to process forgot password request." });
+  }
 })
 
 module.exports = auth;
