@@ -120,7 +120,7 @@ const verifyOtp = async (userId, otp) => {
 
 const updateUserPassword = async (id, newHashedPassword) => {
   try {
-    console.log("Updating password for user ID:", id);
+    // console.log("Updating password for user ID:", id);
     // console.log("New hashed password:", newHashedPassword);
     const updatedUser = await db.oneOrNone(
       "UPDATE users SET password_hash=$1 WHERE id=$2 RETURNING *",
@@ -134,6 +134,8 @@ const updateUserPassword = async (id, newHashedPassword) => {
     console.error("Error updating password:", error);
     throw new Error("An error occurred updating password.");
   }
-}
+};
+
+
 
 module.exports = { findUserByEmail, createUser, updateUserVerification, saveOtpForUser, findOtpByUserId, verifyOtp, updateUserPassword, findUserById }

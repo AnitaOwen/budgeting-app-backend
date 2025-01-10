@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const sgMail = require('@sendgrid/mail');
 const { saveOtpForUser } = require("../queries/users")
 
@@ -70,6 +71,7 @@ const sendPasswordChangeEmail = async (user) => {
         throw new Error(`Failed to send password change email to ${user.email}`);
     }
 }
+
 const sendTempPasswordEmail = async (email, temporaryPass) => {
     const msg = {
       to: email,

@@ -35,7 +35,7 @@ auth.post("/register", async (req, res) => {
   
     if (verificationToken) {
       return res.status(201).json({
-        message: "Registration success! Please verify your email.",
+        message: "Registration success! Please check your inbox to verify your email before logging in.",
         user: newUser,
         token: verificationToken,
       });
@@ -74,17 +74,17 @@ auth.post("/login", async (req, res) => {
     const foundUser = await findUserByEmail(email);
   
     if (!foundUser){
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: `There is no account registered with this email`});
     }
   
     const validPassword = await bcrypt.compare(password, foundUser.password_hash);
   
     if (!validPassword){
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: 'Password is incorrect' });
     }
 
     if (!foundUser.is_verified) {
-      return res.status(400).json({ message: "Email not verified. Please verify your email first." });
+      return res.status(400).json({ message: "Please check your email or spam inbox for a link to verify your email first" });
     }
 
     if(!otp){
@@ -99,7 +99,7 @@ auth.post("/login", async (req, res) => {
     
     const isOtpValid = await verifyOtp(foundUser.id, otp);
     if (!isOtpValid) {
-      return res.status(400).json({ message: "Invalid or expired OTP." });
+      return res.status(400).json({ message: "Invalid or expired OTP. Please try again." });
     }
      
     const token = generateToken(foundUser);
@@ -200,7 +200,6 @@ auth.put("/forgot-password", async (req, res) => {
   const { email } = req.body;
   try {
     const foundUser = await findUserByEmail(email);
-    console.log(foundUser)
 
     if (!foundUser){
       return res.status(401).json({ message: `No account found for the email ${email}` });
